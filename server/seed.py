@@ -1,26 +1,22 @@
 #!/usr/bin/env python3
 
-from random import choice as rc
+from app import app, db
+from models import Movie
 
-from faker import Faker
-
-from app import app
-from models import db, Movie
-
-fake = Faker()
-
-def make_movies():
-
+with app.app_context():
+    print("Deleting existing movies...")
     Movie.query.delete()
     
-    movies = []
-    for i in range(50):
-        m = Movie(title=fake.sentence(nb_words=4).title())
-        movies.append(m)
-
+    print("Creating movies...")
+    movies = [
+        Movie(title="The Shawshank Redemption", year=1994, genre="Drama"),
+        Movie(title="The Godfather", year=1972, genre="Crime"),
+        Movie(title="The Dark Knight", year=2008, genre="Action"),
+        Movie(title="Pulp Fiction", year=1994, genre="Crime"),
+        Movie(title="Forrest Gump", year=1994, genre="Drama"),
+    ]
+    
     db.session.add_all(movies)
     db.session.commit()
-
-if __name__ == '__main__':
-    with app.app_context():
-        make_movies()
+    
+    print("Movies seeded successfully!")
